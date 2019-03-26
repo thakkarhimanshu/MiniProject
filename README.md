@@ -9,3 +9,26 @@ The first step is to pull the latest Cassandra Docker image
     
     docker pull cassandra:latest
 
+The second step is to run a Cassandra instance within docker
+    
+    docker run --name cassandra-test -d cassandra:latest
+  
+In the third step a 3 node cluster named cassandra is creared. If an error is encountered prompting that google container api is not enabled the same can be achieved by executing following command
+
+    glcoud services enable container.googleapis.com
+    
+(Note: It takes several minutes for clusters to create)
+
+To run Kubernetes service, three files are needed. The first is a Headless service that allow peer discovery i.e. cassandra pods will be able to find each other and form a ring. To run the headless service, execute the following command
+
+    kubectl create -f cassandra-peer-service.yml
+ 
+ The next step is to run service itself. It is executed with the following command
+ 
+    kubectl create -f cassandra-service.yml
+    
+ Finally the replication controller is run ( the replication controller allows the scale up and scale down of the containers as needed)
+ 
+    kubectl create -f cassandra-replication-controller.yml
+ 
+ 

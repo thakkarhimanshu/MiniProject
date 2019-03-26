@@ -7,5 +7,5 @@ The project implements an API that gets the weather for given location co-ordina
 
 The first step is to pull the latest Cassandra Docker image
     
-    "docker pull cassandra:latest"
+    docker pull cassandra:latest
 

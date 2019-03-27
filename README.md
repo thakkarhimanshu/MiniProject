@@ -1,5 +1,5 @@
 # MiniProject
-This file contains the description of work involved in doing the MiniProject for Cloud Computing.
+This README file contains the description of work involved in doing the MiniProject for Cloud Computing.
 
 The project supports an application that is developed in flask and python that is deployed on a docker. The data extracted from the application API is stored in a cassandra database. (mention about cluster creation)Finally the project demonstrates cassandra ring scaling.
 

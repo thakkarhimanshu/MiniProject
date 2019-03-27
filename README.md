@@ -68,4 +68,53 @@ To run Kubernetes service, three files are needed. The first is a Headless servi
  
     kubectl create -f cassandra-replication-controller.yml
  
+ As the next step, check that the single container is running correctly:
+ 
+    kubectl get pods -l name=cassandra
+    
+When the container is found to be working correctly then scale up the nodes via replication controller by using the following command
+
+    kubectl scale rc cassandra --replicas=3
+
+Nodetool status is an important tool to check whether a ring is formed between all of the Cassandra instances. This is done via followinf command
+    
+        kubectl exec -it cassandra-24bgm -- nodetool status
+
+In the above command, cassandra-24bgm is the name of the one of the container created. This name varies between setup. Once a proper ring is created, roughly every node own 65% of load.
+
+With successful creation of the ring, the next step involves creating a KEYSPACE on container. Connect to a container by executing following command
+
+    kubectl exec -it cassandra-24bgm cqlsh
+
+The above command launches CQL shell that facilitates creation of KEYSPACE. Use the following command to create KEYSPACE
+
+    CREATE KEYSPACE weatherdata WITH REPLICATION = {'class' : 'SimpleStrategy', 'replication_factor' : 2};
+    
+And create the table by using the following command
+
+Now build the image and push it to google repository:
+
+    docker build -t gcr.io/${PROJECT_ID}/weather-app:v1 .
+    docker push gcr.io/${PROJECT_ID}/weather-app:v1
+
+Run the above as a service, exposing the deployment to get the external IP
+
+    kubectl run pokemon-app --image=gcr.io/${PROJECT_ID}/weather-app:v1--port 8080
+    kubectl expose deployment weather-app --type=LoadBalancer --port 80 --target-port 8080
+
+Use the following command to check the IP address
+    kubectl get services
+  
+Check the results on the IP address thus obtained  
+
+
+
+
+
+
+
+
+
+
+
  

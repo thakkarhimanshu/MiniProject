@@ -1,9 +1,46 @@
 # MiniProject
 This file contains the description of work involved in doing the MiniProject for Cloud Computing.
 
-The project supports an application that is developed in flask and python. The data extracted from the application API is stored in a cassandra database. Finally the project demonstrates cassandra ring scaling.
+The project supports an application that is developed in flask and python that is deployed on a docker. The data extracted from the application API is stored in a cassandra database. (mention about cluster creation)Finally the project demonstrates cassandra ring scaling.
 
-The project implements an API that gets the weather for given location co-ordinates. The response is in the form of JSON. The information of interest are Temperature, Dew, Humidity and Wind. 'Time since Epoch' in seconds is used as a unique PRIMAY KEY in the database
+The project implements an API that gets the weather for given location co-ordinates. The response is in the form of JSON. The information of interest are Temperature, Dew, Humidity and Wind. 'Time since Epoch' in seconds is used as a unique PRIMAY KEY for the cassandra database.
+
+The main application file is weather.py. It begins by importing required libraries. The time library provides the functions related to time. Cluster is imported from cassandra.cluster. This is needed to communicate with a cassandra database. The project also imports flask, request, render_template and jsonify. The project also needs an API key. The key being referenced from instance/config.py. Note that the key is valid until 30-03-2019. ( The project uses a temporary key provided by www.breezometer.com)
+
+A connection to database is then made by executing
+
+    cluster = Cluster(['cassandra'])
+    
+further a session is created by
+    
+    session = cluster.connect()
+
+A variable template is created to prepare the session for inserting the data by
+
+    insert_data = session.prepare("INSERT INTO weatherdata.currenttemp (time, temperature, dew, humidity, wind) VALUES(?,?,?,?,?)")
+
+As detailed above, the KEYSPACE of cassandra is weatherdata while currenttemp is name of the table. This initialisation takes into consideration the fact that the table has been created (by CQLSH) in the cassandra keyspace. 
+
+The final initialisation involves creating a weather_url that will be queried to achive data of interest
+
+    weather_url_template = "https://api.breezometer.com/weather/v1/current-conditions?lat={lat}&lon={lng}&key={API_KEY}"
+The GET method is mapped to the home page. As of now an location coordinates are of London. With a successul response the information is extracted by the following code
+    
+    json_data = requests.get(weather_url).json()
+    #Extract the required values
+    Temperature = json_data['data']['temperature']['value']
+    Dew = json_data['data']['dew_point']['value']
+    Humidity = json_data['data']['relative_humidity']
+    Wind = json_data['data']['wind']['speed']['value'] 
+ 
+The data is written into the cassandra database 
+
+    session.execute(insert_data,[time.time(),Temperature,Dew,Humidity,Wind])
+ 
+The GET method returns with an object containing an HTML equivalent of JSON data returned by API.
+
+With the application file coded. The Dockerfile is created to deploy the app on a docker.
+
 
 The first step is to pull the latest Cassandra Docker image
     

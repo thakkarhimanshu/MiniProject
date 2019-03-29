@@ -92,6 +92,8 @@ The above command launches CQL shell that facilitates creation of KEYSPACE. Use 
     
 And create the table by using the following command
 
+    CREATE TABLE weatherdata.currenttemp (Time float, Temperature float, Dew float, Humidity float, Wind float, PRIMARY KEY(Time));
+
 Now build the image and push it to google repository:
 
     docker build -t gcr.io/${PROJECT_ID}/weather-app:v1 .

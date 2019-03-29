@@ -105,6 +105,7 @@ Run the above as a service, exposing the deployment to get the external IP
     kubectl expose deployment weather-app --type=LoadBalancer --port 80 --target-port 8080
 
 Use the following command to check the IP address
+    
     kubectl get services
   
 Check the results on the IP address thus obtained  

@@ -1,5 +1,6 @@
 # MiniProject - API to extract weather information
 This README file contains the description of work involved in doing the MiniProject for Cloud Computing.
+This was done simetimeback
 
 The project supports an application that is developed in flask and python and is deployed on a docker. The data extracted from the application API is stored in a cassandra database. Three clusters of database is created and finally the project demonstrates cassandra ring scaling.
 
